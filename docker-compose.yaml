@@ -1,0 +1,29 @@
+version: "3"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: dev-db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - postgres
+    environment:
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=dev-db
+      - PGPASSWORD=password
+      - PGPORT=5432
+    ports:
+      - "3000:3000"
